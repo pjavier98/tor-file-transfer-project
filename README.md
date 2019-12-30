@@ -54,3 +54,9 @@ coincidir o pacote é enviado.
 5. A busca do usuário final vai ser um BFS.
 
 ![Graph](img/graph.jpg)
+
+```
+lsof -i :<application_port>
+
+sudo kill -9 <PID>
+```
