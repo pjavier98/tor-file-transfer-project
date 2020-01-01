@@ -34,7 +34,7 @@ class Client:
         while True:
             try:
                 first_command = '\nSelect one of the commands below:\n'
-                second_command = '[*] List\n' + '[*] Show\n' + '[*] Search <file>\n' + '[*] Upload <file>\n' + '[*] Download <file>\n' + '[*] Exit\n'
+                second_command = '[*] Show\n' + '[*] Search <file>\n' + '[*] Upload <file>\n' + '[*] Download <file>\n' + '[*] Exit\n'
 
                 input_commands = input(first_command + second_command + '\n>> ')
                 aux_input = input_commands.split(' ')
