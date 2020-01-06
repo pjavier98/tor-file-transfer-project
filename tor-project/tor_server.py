@@ -257,15 +257,14 @@ class TorServer:
     def upload(self, conn, filename):
         filesize = int(self.client_command(conn))
         new_file = open(filename, 'wb')
-
-        for i in tqdm(range(0, filesize, 1024)):
+        size = 0
+        while size < filesize:
             response = conn.recv(1024)
+            size = len(response)
             new_file.write(response)
         new_file.close()
 
         print('File "' + filename + '" was successfully uploaded')
-        response = conn.recv(1024)
-        print(response)
         time.sleep(2)
         
     def download(self, conn, filename):

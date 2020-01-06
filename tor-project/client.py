@@ -134,10 +134,6 @@ class Client:
                     time.sleep(0.3)
                     # Send the bytes of the file
                     self.server_socket.sendall(upload_file.read(size))
-
-                    x = 'ok'
-                    time.sleep(0.3)
-                    self.server_socket.sendall(x.encode())
                     
                     upload_file.close()
                     founded = 1
