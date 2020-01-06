@@ -126,7 +126,7 @@ class TorServer:
   
     # Client-Server Communication:
     def client_command(self, conn):
-        str_input = conn.recv(1024)
+        str_input = conn.recv(4096)
         str_input = str_input.rstrip()
         str_input = str_input.decode()
         return str_input
@@ -259,7 +259,7 @@ class TorServer:
         new_file = open(filename, 'wb')
         size = 0
         while size < filesize:
-            response = conn.recv(1024)
+            response = conn.recv(4096)
             size = len(response)
             new_file.write(response)
         new_file.close()
