@@ -183,11 +183,12 @@ class TorServer:
                 if accept_command:
                     self.server_client_communication(conn, 2)
 
-                    self.switcher(conn, input_commands)
-                    # action_thread = threading.Thread(target=self.switcher, args=(conn, input_commands), daemon=True)
-                    # action_thread.start()
+                    # self.switcher(conn, input_commands)
+                    action_thread = threading.Thread(target=self.switcher, args=(conn, input_commands), daemon=True)
+                    action_thread.start()
                     
-                    # action_thread.join()
+                    action_thread.join()
+
                 else:
                     self.server_client_communication(conn, 0)
 
@@ -197,18 +198,18 @@ class TorServer:
         method = getattr(self, method_name)
         
         if method_name == 'show':
-            new_t = threading.Thread(target=method, args=(conn,), daemon=True)
-            new_t.start()
+            # new_t = threading.Thread(target=method, args=(conn,), daemon=True)
+            # new_t.start()
 
-            new_t.join()
-            # return method(conn)
+            # new_t.join()
+            return method(conn)
         else:
             filename = input_commands[1]
-            new_t = threading.Thread(target=method, args=(conn, filename), daemon=True)
-            new_t.start()
+            # new_t = threading.Thread(target=method, args=(conn, filename), daemon=True)
+            # new_t.start()
 
-            new_t.join()
-            # return method(conn, filename)
+            # new_t.join()
+            return method(conn, filename)
 
     # Actions: Search, Show, Upload, Download
     def send_search_file(self, conn, str_search_file, filename):
@@ -263,6 +264,9 @@ class TorServer:
         new_file.close()
 
         print('File "' + filename + '" was successfully uploaded')
+        response = conn.recv(1024)
+        print(response)
+        time.sleep(2)
         
     def download(self, conn, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))

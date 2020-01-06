@@ -133,7 +133,11 @@ class Client:
                     # Wait for 100 miliseconds to send the next command
                     time.sleep(0.3)
                     # Send the bytes of the file
-                    self.server_socket.send(upload_file.read(size))
+                    self.server_socket.sendall(upload_file.read(size))
+
+                    x = 'ok'
+                    time.sleep(0.3)
+                    self.server_socket.sendall(x.encode())
                     
                     upload_file.close()
                     founded = 1
