@@ -230,7 +230,6 @@ class TorServer:
     
     def show(self, conn):
         dir_path = os.path.dirname(os.path.realpath(__name__))
-        filename = ''
         str_file = ''
 
         with os.scandir(dir_path) as dir_contents:
@@ -242,7 +241,7 @@ class TorServer:
                 new_file = File()
                 new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
                 str_file += str(new_file)
-        self.send_search_file(conn, str_file, filename)
+        self.send_search_file(conn, str_file, 'no-input-file')
          
     def upload(self, conn, filename):
         filesize = int(self.client_command(conn))
