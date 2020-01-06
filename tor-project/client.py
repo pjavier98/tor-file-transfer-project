@@ -152,9 +152,10 @@ class Client:
                 filesize = int(self.server_command())
                 size = 0
 
-                while size < filesize:
+                # while size < filesize:
+                for i in tqd(range(0, filesize, 4))
                     response = self.server_socket.recv(4096)
-                    size = len(response)
+                    # size += len(response)
                     new_file.write(response)
                 new_file.close()
 
