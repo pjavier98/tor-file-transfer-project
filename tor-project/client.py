@@ -119,7 +119,7 @@ class Client:
         print(str_files)
 
     def upload(self, filename):
-        current_dir = os.path.dirname(os.path.realpath(__name__)) + '/upload'
+        dir_path = os.path.dirname(os.path.realpath(__name__)) + '/upload'
         founded = 0
 
         with os.scandir(dir_path) as dir_contents:
