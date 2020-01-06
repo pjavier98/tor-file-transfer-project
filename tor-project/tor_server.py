@@ -18,7 +18,7 @@ class TorServer:
             self.is_server_closed = False
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.list_commands = ['search', 'show', 'upload', 'download']
-            self.response = ['This command does not exist, rewrite', 'end', 'off', 'ok', 'found']
+            self.response = ['This command does not exist, rewrite', 'end', 'ok', 'found', 'Not found file']
             self.NUMBER_OF_THREADS = 2
             self.JOB_NUMBER = [1, 2]
             self.queue = Queue()
@@ -130,12 +130,12 @@ class TorServer:
         str_input = str_input.decode()
         return str_input
 
-    def server_client_communication(self, conn, msg_num):
-        # wait for 300 milliseconds
-        time.sleep(.3) 
+    def server_client_communication(self, conn, index):
+        # wait for 100 milliseconds
+        time.sleep(.1) 
         
         # then send the command
-        conn.send(self.response[msg_num].encode())    
+        conn.send(self.response[index].encode())    
 
     def finalize_client_connection(self, conn, address):
         end = 0
@@ -180,10 +180,10 @@ class TorServer:
             else:
                 accept_command = self.commands_rules(input_commands) 
                 if accept_command:
-                    conn.send(self.response[3].encode())
+                    self.server_client_communication(conn, 2)
                     self.switcher(conn, input_commands)
                 else:
-                    conn.send(self.response[0].encode())
+                    self.server_client_communication(conn, 0)
 
     # Switchers of commands
     def switcher(self, conn, input_commands):
@@ -210,13 +210,12 @@ class TorServer:
             else:
                 str_search_file = 'Not found file with the string/substring: [' + input_file + ']'
             conn.sendall(str_search_file.encode())
-        msg_num = 1
-        self.server_client_communication(conn, msg_num)
+        self.server_client_communication(conn, 1)
         print('Search was made successfully')
 
     def search(self, conn, filename):
-        str_file = ''
         dir_path = os.path.dirname(os.path.realpath(__name__))
+        str_file = ''
 
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
@@ -230,18 +229,19 @@ class TorServer:
         self.send_search_file(conn, str_file, filename)
     
     def show(self, conn):
-        str_file = ''
         dir_path = os.path.dirname(os.path.realpath(__name__))
+        str_file = ''
 
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
-                file_info = file.stat()
                 filename = file.name
-                
+                  
+                file_info = file.stat()
+                    
                 new_file = File()
-                new_file.update_file(file.name, file_info.st_size, file_info.st_mtime)
+                new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
                 str_file += str(new_file)
-        self.send_search_file(conn, str_file, 'no-input-file')
+        self.send_search_file(conn, str_file, filename)
          
     def upload(self, conn, filename):
         filesize = int(self.client_command(conn))
@@ -256,14 +256,13 @@ class TorServer:
         print('File "' + filename + '" was successfully uploaded')
         
     def download(self, conn, filename):
-        founded = 0
         dir_path = os.path.dirname(os.path.realpath(__name__))
+        founded = 0
 
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
                 if file.name == filename:
-                    msg_num = 4
-                    conn.send(self.response[msg_num].encode())
+                    self.server_client_communication(conn, 3)
                     download_file = open(file, "rb")
                     size = file.stat().st_size
 
@@ -281,5 +280,4 @@ class TorServer:
         if (founded):
             print('File sent with success')
         else:
-            error = 'Not found file: ' + filename
-            conn.send(error.encode())
+            self.server_client_communication(conn, 4)

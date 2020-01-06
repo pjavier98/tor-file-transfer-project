@@ -12,14 +12,18 @@ class Client:
     
     def create_dir(self):
         try:
-            new_dir = 'tor_files'
-            os.mkdir(new_dir)
-            print("Directory " + new_dir + " created with success") 
+            folder = 'client_files'
+            upload = 'upload'
+            download = 'download'
+            os.mkdir(folder)
+            os.mkdir(folder + '/' + upload)
+            os.mkdir(folder + '/' + download)
+            print("Directories [" + folder + ', ' + upload +  ', ' + download + "] created with success") 
         except FileExistsError:
-            print("Directory " + new_dir + " already exists")
+            print("Directory " + folder + " already exists")
 
     def switch_dir(self):
-        os.chdir('tor_files')
+        os.chdir('client_files')
 
     def iniciate_connection(self):
         print('Enter the host and the port application to connect')
@@ -105,7 +109,7 @@ class Client:
         return str_output
     
     # show (show all files)
-    def show(self, input_file):
+    def show(self):
         str_files = self.receive_search_file()
         print(str_files)
         
@@ -115,15 +119,15 @@ class Client:
         print(str_files)
 
     def upload(self, filename):
+        current_dir = os.path.dirname(os.path.realpath(__name__)) + '/upload'
         founded = 0
-        dir_path = os.path.dirname(os.path.realpath(__name__))
 
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
                 if file.name == filename:
                     upload_file = open(file, "rb")
                     size = file.stat().st_size
-                    print('size: ', size)
+
                     # Send the size of the file
                     self.server_socket.send(str(size).encode())
                     # Wait for 100 miliseconds to send the next command
@@ -134,7 +138,6 @@ class Client:
                     upload_file.close()
                     founded = 1
                     break
-
         if (founded):
             print('File "' + filename + '" was successfully uploaded', end='\n\n')
         else:
@@ -144,16 +147,17 @@ class Client:
         response = self.server_command()
 
         if response == 'found':
-            new_file = open(filename, 'wb')
-            filesize = int(self.server_command())
-            
+            dir_path = os.path.dirname(os.path.realpath(__name__)) + '/download'
+            with open(os.path.join(dir_path, filename), "wb") as new_file:
+                filesize = int(self.server_command())
+                
 
-            for i in tqdm(range(0, filesize, 1024)):
-                response = self.server_socket.recv(1024)
-                new_file.write(response)
-            new_file.close()
+                for i in tqdm(range(0, filesize, 1024)):
+                    response = self.server_socket.recv(1024)
+                    new_file.write(response)
+                new_file.close()
 
-            time.sleep(0.1)
-            print('File "' + filename + '" was successfully downloaded', end='\n\n')
+                time.sleep(0.1)
+                print('File "' + filename + '" was successfully downloaded')
         else:
             print(response)
