@@ -1,21 +1,47 @@
 import socket
+import os
+import time
+from tqdm import tqdm
 
 class Client:
       
     def __init__(self):
         self.host = ''
         self.port = ''
-        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
-    def iniciate_connection(self, host='', port=15096):
-        self.client_socket.connect((host, port))
-    
+    def create_dir(self):
+        try:
+            new_dir = 'tor_files'
+            os.mkdir(new_dir)
+            print("Directory " + new_dir + " created with success") 
+        except FileExistsError:
+            print("Directory " + new_dir + " already exists")
+
+    def switch_dir(self):
+        os.chdir('tor_files')
+
+    def iniciate_connection(self):
+        print('Enter the host and the port application to connect')
+        
+        while True:
+            try:
+                self.host = input('host: ')
+                self.port = int(input('port: '))
+                self.server_socket.connect((self.host, self.port))
+                print('\nConnection was established with success\n')
+                return True
+            except ConnectionRefusedError as msg:
+                print(msg)
+            except ValueError as msg:
+                print(msg)
+         
     def close_client_connection(self):
         print('Connection with the server was closed')
-        self.client_socket.close()
+        self.server_socket.close()
 
     def server_command(self):
-        str_input = self.client_socket.recv(4096)
+        str_input = self.server_socket.recv(1024)
         str_input = str_input.rstrip()
         str_input = str_input.decode()
 
@@ -28,22 +54,24 @@ class Client:
         else:
             return False
     
-    # input_commands[0] = search / show / upload / download
-    # input_commands[1] = .txt / video.mp4 / musica.mp3
+    # input_commands[0] = search | show | upload | download
+    # input_commands[1] = .txt | video.mp4 | musica.mp3 | substring
     def send_commands(self):
         while True:
             try:
                 first_command = '\nSelect one of the commands below:\n'
-                second_command = '[*] Show\n' + '[*] Search <file>\n' + '[*] Upload <file>\n' + '[*] Download <file>\n' + '[*] Exit\n'
+                second_command = '[*] ls\n[*] show\n[*] search <file>\n[*] upload <file>\n[*] download <file>\n[*] exit\n'
 
                 input_commands = input(first_command + second_command + '\n>> ')
                 aux_input = input_commands.split(' ')
                 if aux_input[0] == 'exit':
-                    self.client_socket.sendall(input_commands.encode())
+                    self.server_socket.sendall(input_commands.encode())
                     self.close_client_connection()
                     break
+                elif aux_input[0] == 'ls':
+                    os.system('ls')
                 elif int(len(input_commands)) < 50:
-                    self.client_socket.sendall(input_commands.encode())
+                    self.server_socket.sendall(input_commands.encode())
                     input_commands = input_commands.split(' ')
                     response = self.server_command()
                     
@@ -59,7 +87,12 @@ class Client:
     def switcher(self, input_commands):
         method_name = input_commands[0]
         method = getattr(self, method_name)
-        return method()
+        
+        if method_name == 'show' or method_name == 'search':
+            return method()
+        else:
+            filename = input_commands[1]
+            return method(filename)
 
     def receive_search_file(self):
         str_output = ''
@@ -67,25 +100,60 @@ class Client:
             response = self.server_command()
 
             if (self.server_client_communication(response)):
-                # end
                 break
             str_output += response
         return str_output
     
     # show (show all files)
-    def show(self):
+    def show(self, input_file):
         str_files = self.receive_search_file()
         print(str_files)
         
-    # search .txt
+    # search [ .txt | .png | .mp4 | .pdf ]
     def search(self):
         str_files = self.receive_search_file()
         print(str_files)
 
-    # def upload(self):
+    def upload(self, filename):
+        founded = 0
+        dir_path = os.path.dirname(os.path.realpath(__name__))
 
-    # def download(self):  
-                
-client = Client()
-client.iniciate_connection()
-client.send_commands()
+        with os.scandir(dir_path) as dir_contents:
+            for file in dir_contents:
+                if file.name == filename:
+                    upload_file = open(file, "rb")
+                    size = file.stat().st_size
+                    print('size: ', size)
+                    # Send the size of the file
+                    self.server_socket.send(str(size).encode())
+                    # Wait for 100 miliseconds to send the next command
+                    time.sleep(0.3)
+                    # Send the bytes of the file
+                    self.server_socket.sendall(upload_file.read(size))
+                    
+                    upload_file.close()
+                    founded = 1
+                    break
+
+        if (founded):
+            print('File "' + filename + '" was successfully uploaded', end='\n\n')
+        else:
+            error = 'Not found file: ' + filename
+        
+    def download(self, filename):
+        response = self.server_command()
+
+        if response == 'found':
+            new_file = open(filename, 'wb')
+            filesize = int(self.server_command())
+            
+
+            for i in tqdm(range(0, filesize, 1024)):
+                response = self.server_socket.recv(1024)
+                new_file.write(response)
+            new_file.close()
+
+            time.sleep(0.1)
+            print('File "' + filename + '" was successfully downloaded', end='\n\n')
+        else:
+            print(response)
