@@ -132,7 +132,7 @@ class TorServer:
 
     def server_client_communication(self, conn, index):
         # wait for 100 milliseconds
-        time.sleep(.1) 
+        time.sleep(.3) 
         
         # then send the command
         conn.send(self.response[index].encode())    
@@ -241,6 +241,7 @@ class TorServer:
                 new_file = File()
                 new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
                 str_file += str(new_file)
+        print('str_file: ', str_file)
         self.send_search_file(conn, str_file, 'no-input-file')
          
     def upload(self, conn, filename):
