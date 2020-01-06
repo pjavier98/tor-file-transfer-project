@@ -201,14 +201,14 @@ class TorServer:
             return method(conn, filename)
 
     # Actions: Search, Show, Upload, Download
-    def send_search_file(self, conn, str_search_file, input_file):
+    def send_search_file(self, conn, str_search_file, filename):
         if len(str_search_file) > 0:
             conn.sendall(str_search_file.encode())
         else:
-            if input_file == 'no-input-file':
+            if filename == 'no-input-file':
                 str_search_file = 'There are not files to search'
             else:
-                str_search_file = 'Not found file with the string/substring: [' + input_file + ']'
+                str_search_file = 'Not found file with the string/substring: [' + filename + ']'
             conn.sendall(str_search_file.encode())
         self.server_client_communication(conn, 1)
         print('Search was made successfully')
@@ -230,6 +230,7 @@ class TorServer:
     
     def show(self, conn):
         dir_path = os.path.dirname(os.path.realpath(__name__))
+        filename = ''
         str_file = ''
 
         with os.scandir(dir_path) as dir_contents:
