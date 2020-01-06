@@ -19,7 +19,7 @@ Users: Client-Server (Peer-to-Peer / P2P)
 
 #### TQDM Library Installation:
 ```
-pip/pip3 install tqdm
+pip3 install tqdm
 ```
 or
 ```
