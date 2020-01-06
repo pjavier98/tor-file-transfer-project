@@ -12,6 +12,7 @@ class TorServer:
 
     def __init__(self):
         try:
+            self.alive = 1
             self.host = ''
             self.port = ''
             self.users = []
@@ -181,7 +182,12 @@ class TorServer:
                 accept_command = self.commands_rules(input_commands) 
                 if accept_command:
                     self.server_client_communication(conn, 2)
+
                     self.switcher(conn, input_commands)
+                    # action_thread = threading.Thread(target=self.switcher, args=(conn, input_commands), daemon=True)
+                    # action_thread.start()
+                    
+                    # action_thread.join()
                 else:
                     self.server_client_communication(conn, 0)
 
@@ -191,14 +197,18 @@ class TorServer:
         method = getattr(self, method_name)
         
         if method_name == 'show':
-            # new_t = threading.Thread(target=method, args=(conn,), daemon=True)
-            # new_t.start()
-            return method(conn)
+            new_t = threading.Thread(target=method, args=(conn,), daemon=True)
+            new_t.start()
+
+            new_t.join()
+            # return method(conn)
         else:
             filename = input_commands[1]
-            # new_t = threading.Thread(target=method, args=(conn, filename), daemon=True)
-            # new_t.start()
-            return method(conn, filename)
+            new_t = threading.Thread(target=method, args=(conn, filename), daemon=True)
+            new_t.start()
+
+            new_t.join()
+            # return method(conn, filename)
 
     # Actions: Search, Show, Upload, Download
     def send_search_file(self, conn, str_search_file, filename):
@@ -241,7 +251,6 @@ class TorServer:
                 new_file = File()
                 new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
                 str_file += str(new_file)
-        print('str_file: ', str_file)
         self.send_search_file(conn, str_file, 'no-input-file')
          
     def upload(self, conn, filename):
@@ -253,7 +262,6 @@ class TorServer:
             new_file.write(response)
         new_file.close()
 
-        time.sleep(0.1)
         print('File "' + filename + '" was successfully uploaded')
         
     def download(self, conn, filename):

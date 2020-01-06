@@ -133,7 +133,7 @@ class Client:
                     # Wait for 100 miliseconds to send the next command
                     time.sleep(0.3)
                     # Send the bytes of the file
-                    self.server_socket.sendall(upload_file.read(size))
+                    self.server_socket.send(upload_file.read(size))
                     
                     upload_file.close()
                     founded = 1
@@ -145,19 +145,21 @@ class Client:
         
     def download(self, filename):
         response = self.server_command()
+        time.sleep(0.3)
 
         if response == 'found':
             dir_path = os.path.dirname(os.path.realpath(__name__)) + '/download'
             with open(os.path.join(dir_path, filename), "wb") as new_file:
                 filesize = int(self.server_command())
+                time.sleep(0.3)
                 
-
                 for i in tqdm(range(0, filesize, 1024)):
                     response = self.server_socket.recv(1024)
                     new_file.write(response)
+                    time.sleep(0.1)
                 new_file.close()
 
-                time.sleep(0.1)
+                time.sleep(0.3)
                 print('File "' + filename + '" was successfully downloaded')
         else:
             print(response)
