@@ -2,6 +2,7 @@ import socket
 import os
 import time
 from tqdm import tqdm
+import progressbar
 
 class Client:
       
@@ -64,7 +65,7 @@ class Client:
         while True:
             try:
                 first_command = '\nSelect one of the commands below:\n'
-                second_command = '[*] ls\n[*] show\n[*] search <file>\n[*] upload <file>\n[*] download <file>\n[*] exit\n'
+                second_command = '[*] show\n[*] search <file>\n[*] upload <file>\n[*] download <file>\n[*] exit\n'
 
                 input_commands = input(first_command + second_command + '\n>> ')
                 aux_input = input_commands.split(' ')
@@ -72,8 +73,6 @@ class Client:
                     self.server_socket.sendall(input_commands.encode())
                     self.close_client_connection()
                     break
-                elif aux_input[0] == 'ls':
-                    os.system('ls')
                 elif int(len(input_commands)) < 50:
                     self.server_socket.sendall(input_commands.encode())
                     input_commands = input_commands.split(' ')
@@ -139,26 +138,31 @@ class Client:
                     founded = 1
                     break
         if (founded):
-            print('File "' + filename + '" was successfully uploaded', end='\n\n')
+            print('File "' + filename + '" was sent successfully', end='\n\n')
         else:
-            error = 'Not found file: ' + filename
+            print('Not found file: ' + filename)
         
     def download(self, filename):
         response = self.server_command()
 
         if response == 'found':
             dir_path = os.path.dirname(os.path.realpath(__name__)) + '/download'
+            filesize = int(self.server_command())
+            pbar = tqdm(total=filesize, unit="KB")
+            size = 0
+
             with open(os.path.join(dir_path, filename), "wb") as new_file:
-                filesize = int(self.server_command())
-                size = 0
-
-                # while size < filesize:
-                for i in tqd(range(0, filesize, 4))
+                while size < filesize:
                     response = self.server_socket.recv(4096)
-                    # size += len(response)
+                    
+                    time.sleep(0.1)
+                    size += len(response)
+                    pbar.update(len(response))
+                    
                     new_file.write(response)
-                new_file.close()
+                pbar.close()
+            new_file.close()
 
-                print('File "' + filename + '" was successfully downloaded')
+            print('File "' + filename + '" was successfully downloaded')
         else:
             print(response)

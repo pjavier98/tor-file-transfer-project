@@ -255,17 +255,24 @@ class TorServer:
         self.send_search_file(conn, str_file, 'no-input-file')
          
     def upload(self, conn, filename):
+        dir_path = os.path.dirname(os.path.realpath(__name__))
         filesize = int(self.client_command(conn))
-        new_file = open(filename, 'wb')
+        pbar = tqdm(total=filesize, unit="KB")
         size = 0
-        while size < filesize:
-            response = conn.recv(4096)
-            size = len(response)
-            new_file.write(response)
+
+        with open(os.path.join(dir_path, filename), "wb") as new_file:
+            while size < filesize:
+                response = conn.recv(4096)
+                
+                time.sleep(0.1)
+                size += len(response)
+                pbar.update(len(response))
+                
+                new_file.write(response)
+            pbar.close()
         new_file.close()
 
         print('File "' + filename + '" was successfully uploaded')
-        time.sleep(2)
         
     def download(self, conn, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
@@ -290,6 +297,6 @@ class TorServer:
                     break
 
         if (founded):
-            print('File sent with success')
+            print('File "' + filename + '" was sent successfully', end='\n\n')
         else:
             self.server_client_communication(conn, 4)
