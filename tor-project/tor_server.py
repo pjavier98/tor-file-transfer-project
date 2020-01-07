@@ -235,7 +235,7 @@ class TorServer:
                     file_info = file.stat()
                     
                     new_file = File()
-                    new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
+                    new_file.update_file(file_name, file_info.st_size, file_info.st_mtime)
                     str_file += str(new_file)
         self.send_search_file(conn, str_file, filename)
     
