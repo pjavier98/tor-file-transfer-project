@@ -73,7 +73,7 @@ class Client:
                     self.server_socket.sendall(input_commands.encode())
                     self.close_client_connection()
                     break
-                elif int(len(input_commands)) < 50:
+                elif int(len(input_commands)) < 100:
                     self.server_socket.sendall(input_commands.encode())
                     input_commands = input_commands.split(' ')
                     response = self.server_command()
