@@ -184,7 +184,7 @@ class TorServer:
                     self.server_client_communication(conn, 2)
 
                     # self.switcher(conn, input_commands)
-                    action_thread = threading.Thread(target=self.switcher, args=(conn, input_commands), daemon=True)
+                    action_thread = threading.Thread(target=self.switcher, args=(conn, address, input_commands), daemon=True)
                     action_thread.start()
                     
                     action_thread.join()
@@ -193,26 +193,18 @@ class TorServer:
                     self.server_client_communication(conn, 0)
 
     # Switchers of commands
-    def switcher(self, conn, input_commands):
+    def switcher(self, conn, address, input_commands):
         method_name = input_commands[0]
         method = getattr(self, method_name)
         
         if method_name == 'show':
-            # new_t = threading.Thread(target=method, args=(conn,), daemon=True)
-            # new_t.start()
-
-            # new_t.join()
-            return method(conn)
+            return method(conn, address)
         else:
             filename = input_commands[1]
-            # new_t = threading.Thread(target=method, args=(conn, filename), daemon=True)
-            # new_t.start()
-
-            # new_t.join()
-            return method(conn, filename)
+            return method(conn, address, filename)
 
     # Actions: Search, Show, Upload, Download
-    def send_search_file(self, conn, str_search_file, filename):
+    def send_search_file(self, conn, address, str_search_file, filename):
         if len(str_search_file) > 0:
             conn.sendall(str_search_file.encode())
         else:
@@ -222,9 +214,9 @@ class TorServer:
                 str_search_file = 'Not found file with the string/substring: [' + filename + ']'
             conn.sendall(str_search_file.encode())
         self.server_client_communication(conn, 1)
-        print('Search was made successfully')
+        print('Search was made successfully by client: {}'.format(address))
 
-    def search(self, conn, filename):
+    def search(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         str_file = ''
 
@@ -237,9 +229,9 @@ class TorServer:
                     new_file = File()
                     new_file.update_file(file_name, file_info.st_size, file_info.st_mtime)
                     str_file += str(new_file)
-        self.send_search_file(conn, str_file, filename)
+        self.send_search_file(conn, address, str_file, filename)
     
-    def show(self, conn):
+    def show(self, conn, address):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         str_file = ''
 
@@ -252,9 +244,9 @@ class TorServer:
                 new_file = File()
                 new_file.update_file(filename, file_info.st_size, file_info.st_mtime)
                 str_file += str(new_file)
-        self.send_search_file(conn, str_file, 'no-input-file')
+        self.send_search_file(conn, address, str_file, 'no-input-file')
          
-    def upload(self, conn, filename):
+    def upload(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         filesize = int(self.client_command(conn))
         pbar = tqdm(total=filesize, unit="KB")
@@ -272,9 +264,9 @@ class TorServer:
             pbar.close()
         new_file.close()
 
-        print('File "' + filename + '" was successfully uploaded')
+        print('File "{}" was successfully uploaded by client: {}'.format(filename, address))
         
-    def download(self, conn, filename):
+    def download(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         founded = 0
 
@@ -297,6 +289,6 @@ class TorServer:
                     break
 
         if (founded):
-            print('File "' + filename + '" was sent successfully', end='\n\n')
+            print('File "{}" was sent successfully to {}'.format(filename, address))
         else:
             self.server_client_communication(conn, 4)
