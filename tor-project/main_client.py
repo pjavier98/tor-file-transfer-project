@@ -1,4 +1,4 @@
-from client import *
+from tor_client import *
 
 def create_client():
     client = Client()
