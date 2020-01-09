@@ -2,7 +2,6 @@ import socket
 import os
 import time
 from tqdm import tqdm
-import progressbar
 
 class Client:
       
