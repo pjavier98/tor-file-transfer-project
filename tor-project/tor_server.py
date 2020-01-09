@@ -247,29 +247,33 @@ class TorServer:
         self.send_search_file(conn, address, str_file, 'no-input-file')
          
     def upload(self, conn, address, filename):
-        dir_path = os.path.dirname(os.path.realpath(__name__))
-        filesize = int(self.client_command(conn))
-        pbar = tqdm(total=filesize, unit="KB")
-        size = 0
+        founded = self.client_command(conn)
 
-        with open(os.path.join(dir_path, filename), "wb") as new_file:
-            while size < filesize:
-                response = conn.recv(4096)
-                
-                time.sleep(0.1)
-                size += len(response)
-                pbar.update(len(response))
-                
-                new_file.write(response)
-            pbar.close()
-        new_file.close()
+        if (response == 'founded'):
+            print('File "{}" was sent by {}'.format(filename, address))
+            print('Downloading ...')
+            dir_path = os.path.dirname(os.path.realpath(__name__))
+            filesize = int(self.client_command(conn))
+            pbar = tqdm(total=filesize, unit="KB")
+            size = 0
 
-        print('File "{}" was successfully uploaded by client: {}'.format(filename, address))
+            with open(os.path.join(dir_path, filename), "wb") as new_file:
+                while size < filesize:
+                    response = conn.recv(4096)
+                    size += len(response)
+                    pbar.update(len(response))
+                    
+                    new_file.write(response)
+                pbar.close()
+            new_file.close()
+
+            print('File "{}" was successfully uploaded by client: {}'.format(filename, address))
         
     def download(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         founded = 0
-
+        print('File "{}" was sent request by {}'.format(filename, address))
+        print('Sending...')
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
                 if file.name == filename:

@@ -136,15 +136,21 @@ class Client:
                     upload_file.close()
                     founded = 1
                     break
+        
         if (founded):
+            file_founded = 'founded'
+            self.server_socket.send(file_founded.encode())
             print('File "' + filename + '" was sent successfully', end='\n\n')
         else:
+            file_founded = 'not founded'
+            self.server_socket.send(file_founded.encode())
             print('Not found file: ' + filename)
         
     def download(self, filename):
         response = self.server_command()
 
         if response == 'found':
+            print('Downloading...')
             dir_path = os.path.dirname(os.path.realpath(__name__)) + '/download'
             filesize = int(self.server_command())
             pbar = tqdm(total=filesize, unit="KB")
