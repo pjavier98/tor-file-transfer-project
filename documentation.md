@@ -1,4 +1,4 @@
-# tor-file-transfer-project
+# Tor-File-Transfer-Project:
 File transfer project using sockets, python and threads.
 
 The project consists of an application where it has a central server and 
@@ -10,7 +10,7 @@ files.
 Server: Tor-Server
 Users: Client-Server (Peer-to-Peer / P2P)
 
-## TFTCP (Tor-File-Transfer-Control-Protocol)
+## TFTCP (Tor-File-Transfer-Control-Protocol):
 All commands that are entered by the user are sent to the server,
 it performs a check if those commands are correct and returns
 an answer to the actions being taken. That is, all verifications are
@@ -36,11 +36,11 @@ Request-Response:
     'exit'
   Communicating to server to kill connection with him and he disconnects
 *-------------------------------------------------------------------------*
-  To finalize the sent of a file, initially the total size of the file is sent
+  To finalize the sent of a file, initially the total size of the file is 
+  sent
 ```
 
 ## Tor-Server:
-
 The server has a folder called "tor_files" where all the files are
 files that the server has, (the ones it already had and the ones that
 upload).
@@ -49,14 +49,14 @@ The server can also execute commands on it simultaneously with commands
 submitted by clients such as:
 
 ```
->> list
-List the connections and the amount of online clients
+  >> list
+  List all the connections and the amount of online clients
 *-------------------------------------------------------------------------*
->> clear
-Clean the terminal
+  >> clear
+  Clean the terminal
 *-------------------------------------------------------------------------*
->> exit
-Logs out if no clients are online
+  >> exit
+  Logs out if no clients are online
 ```
 
 ## Clients:
@@ -69,18 +69,18 @@ server.
 
 Commands that can be executed by the clients:
 ```
->> show
-Lists all files the server has
+  >> show
+  Lists all files the server has
 *-------------------------------------------------------------------------*
->> search <filename>
-List all files containing the specified substring (.pdf, .mp4)
+  >> search <filename>
+  List all files containing the specified substring (.pdf, .mp4)
 *-------------------------------------------------------------------------*
->> upload <filename>
-Upload a user field to the server
+  >> upload <filename>
+  Upload a user field to the server
 *-------------------------------------------------------------------------*
->> download <filename>
-Download a file from the server
+  >> download <filename>
+  Download a file from the server
 *-------------------------------------------------------------------------*
->> exit
-Communicates to server that will disconnect and terminates its connection
+  >> exit
+  Communicates to server that will disconnect and terminates its connection
 ```
