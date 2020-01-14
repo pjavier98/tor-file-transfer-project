@@ -56,13 +56,13 @@ submitted by clients such as:
   Clean the terminal
 *-------------------------------------------------------------------------*
   >> exit
-  Logs out if no clients are online
+  Logs out the server if no clients are online
 ```
 
 ## Clients:
 When the application is started, the host and port of the server that requires
-will connect, a folder named 'tor-files' is also created. Inside the
-It will create two folders, 'Downloads' and 'Uploads'. In the folder
+will connect, a folder named **'tor-files'** is also created. Inside the
+It will create two folders, **'downloads'** and **'uploads'**. In the folder
 downloads were all files downloaded from the server and in the folder of
 uploads should be placed the files that will be uploaded to the
 server.
@@ -70,17 +70,17 @@ server.
 Commands that can be executed by the clients:
 ```
   >> show
-  Lists all files the server has
+  Lists all files the server has.
 *-------------------------------------------------------------------------*
   >> search <filename>
   List all files containing the specified substring (.pdf, .mp4)
 *-------------------------------------------------------------------------*
   >> upload <filename>
-  Upload a user field to the server
+  Upload an user file to the server.
 *-------------------------------------------------------------------------*
   >> download <filename>
-  Download a file from the server
+  Download a file from the server.
 *-------------------------------------------------------------------------*
   >> exit
-  Communicates to server that will disconnect and terminates its connection
+  Communicates to server that will disconnect and terminates its connection.
 ```
