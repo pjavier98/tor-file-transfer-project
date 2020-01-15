@@ -292,7 +292,7 @@ class TorServer:
                     founded = 1
                     break
 
-        if (founded):
+        if founded:
             print('File "{}" was sent successfully to {}'.format(filename, address))
         else:
             self.server_client_communication(conn, 4)

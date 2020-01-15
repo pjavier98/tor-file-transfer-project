@@ -142,7 +142,7 @@ class Client:
                     founded = 1
                     break
         
-        if (founded):
+        if founded:
             print('File "' + filename + '" was sent successfully', end='\n\n')
         else:
             file_founded = 'not founded'
