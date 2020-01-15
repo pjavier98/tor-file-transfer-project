@@ -126,6 +126,11 @@ class Client:
                     upload_file = open(file, "rb")
                     size = file.stat().st_size
 
+                    # Send the command that found the file
+                    file_founded = 'founded'
+                    self.server_socket.send(file_founded.encode())
+                    # Wait for 100 miliseconds to send the next command
+                    time.sleep(0.3)
                     # Send the size of the file
                     self.server_socket.send(str(size).encode())
                     # Wait for 100 miliseconds to send the next command
@@ -138,8 +143,6 @@ class Client:
                     break
         
         if (founded):
-            file_founded = 'founded'
-            self.server_socket.send(file_founded.encode())
             print('File "' + filename + '" was sent successfully', end='\n\n')
         else:
             file_founded = 'not founded'
