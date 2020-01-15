@@ -143,7 +143,7 @@ class Client:
                     break
         
         if founded:
-            print('File "' + filename + '" was sent successfully', end='\n\n')
+            print('File "' + filename + '" was sent successfully')
         else:
             file_founded = 'not founded'
             self.server_socket.send(file_founded.encode())

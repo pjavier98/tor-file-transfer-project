@@ -272,7 +272,7 @@ class TorServer:
     def download(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         founded = 0
-        print('File "{}" was sent request by {}'.format(filename, address))
+        print('File "{}" was request by {}'.format(filename, address))
         print('Sending...')
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
