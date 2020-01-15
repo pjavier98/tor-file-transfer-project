@@ -108,5 +108,9 @@ cd <client_name>
 python3 main_client.py
 ```
 
+#### If you want to connect with the Server on Digital Ocean:
+* IP: 67.205.133.143
+* Port: 7777
+
 Now you are ready to download and upload files, share knowledge and other
 things with other people around the world!!!
