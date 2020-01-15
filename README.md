@@ -64,29 +64,9 @@ for each client that will be executed create a folder containing the client
 name and put in the **'main_client.py'** and the **'tor_client.py'** files.
 
 
-## To execute the project locally:
+## To execute the project:
 ### Tor-Server:
-Open your terminal and run the followings commands to run the tor-server:
-```
-git clone https://github.com/pjavier98/tor-file-transfer-project
-
-cd tor-file-transfer-project/tor-project
-
-python3 main_server.py
-```
-
-### Tor-Client:
-Open your terminal and run the followings commands to run a tor-client:
-```
-git clone https://github.com/pjavier98/tor-file-transfer-project
-
-cd tor-file-transfer-project/tor-project
-
-python3 main_client.py
-```
-
-## To execute the project using a hosted server:
-### Tor-Server:
+#### Execute using a hosted server:
 Tor-Server was hosted at DigitalOcean.
 
 To execute the server run the followings commands:
@@ -101,7 +81,18 @@ cd tor-file-transfer-project/tor-project
 
 python3 main_server.py
 ```
+#### Execute locally:
+Open your terminal and run the followings commands to run the tor-server:
+```
+git clone https://github.com/pjavier98/tor-file-transfer-project
+
+cd tor-file-transfer-project/tor-project
+
+python3 main_server.py
+```
+
 ### Tor-Client:
+#### To execute: 
 Open your terminal and run the followings commands to run a tor-client:
 ```
 git clone https://github.com/pjavier98/tor-file-transfer-project
