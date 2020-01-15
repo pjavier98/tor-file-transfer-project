@@ -247,7 +247,7 @@ class TorServer:
         self.send_search_file(conn, address, str_file, 'no-input-file')
          
     def upload(self, conn, address, filename):
-        founded = self.client_command(conn)
+        response = self.client_command(conn)
 
         if (response == 'founded'):
             print('File "{}" was sent by {}'.format(filename, address))
