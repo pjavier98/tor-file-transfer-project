@@ -45,12 +45,12 @@ snap install tqdm
 
 MacOS:
 ```
-pip3 <package_name>
+pip3 tqdm
 ```
 
 Windows:
 ```
-pip install <package_name>
+pip install tqdm
 ```
 ## Comments:
 ### Tor-Server:
