@@ -272,11 +272,12 @@ class TorServer:
     def download(self, conn, address, filename):
         dir_path = os.path.dirname(os.path.realpath(__name__))
         founded = 0
-        print('File "{}" was request by {}'.format(filename, address))
-        print('Sending...')
+        
         with os.scandir(dir_path) as dir_contents:
             for file in dir_contents:
                 if file.name == filename:
+                    print('File "{}" was request by {}'.format(filename, address))
+                    print('Sending...')
                     self.server_client_communication(conn, 3)
                     download_file = open(file, "rb")
                     size = file.stat().st_size
@@ -295,4 +296,5 @@ class TorServer:
         if founded:
             print('File "{}" was sent successfully to {}'.format(filename, address))
         else:
+            print('Not found file: ' + filename)
             self.server_client_communication(conn, 4)
